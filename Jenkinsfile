@@ -1,14 +1,11 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:16'   // Use Node 16 Docker image
-            args '-u root:root' // Run as root inside the container
-        }
-    }
+    agent any
+
     environment {
-        REGISTRY = "docker.io/<your-dockerhub-username>"  // Replace with your Docker Hub username
+        REGISTRY = "docker.io/<your-dockerhub-username>"   // 🔹 Replace with your DockerHub username
         IMAGE_NAME = "nodejs-sample-app"
     }
+
     stages {
         stage('Checkout Code') {
             steps {
@@ -18,23 +15,25 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'npm install --save'
+                sh 'docker run --rm -v $PWD:/app -w /app node:16 npm install --save'
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'npm test || echo "No tests available, skipping..."'
+                sh 'docker run --rm -v $PWD:/app -w /app node:16 npm test || echo "No tests available, skipping..."'
             }
         }
 
         stage('Security Scan') {
             steps {
-                sh '''
-                npm install -g snyk
-                snyk auth 601b92cc-eca8-4da4-869b-d5e29c568cee
-                snyk test --severity-threshold=high
-                '''
+                withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                    sh '''
+                    docker run --rm -v $PWD:/app -w /app node:16 bash -c "
+                      npm install -g snyk && snyk auth $SNYK_TOKEN && snyk test --severity-threshold=high
+                    "
+                    '''
+                }
             }
         }
 
@@ -55,12 +54,16 @@ pipeline {
             }
         }
     }
+
     post {
         always {
             archiveArtifacts artifacts: '**/npm-debug.log', allowEmptyArchive: true
         }
         failure {
             echo 'Build failed! Check logs for details.'
+        }
+        success {
+            echo 'Build completed successfully!'
         }
     }
 }
