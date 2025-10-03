@@ -29,19 +29,19 @@ pipeline {
             }
         }
 
-        stage('Security Scan') {
-            steps {
-                dir('aws-elastic-beanstalk-express-js-sample') {
-                    withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                        sh '''
-                            npm install -g snyk
-                            snyk auth $SNYK_TOKEN
-                            snyk test --severity-threshold=high
-                        '''
-                    }
-                }
+stage('Security Scan') {
+    steps {
+        dir('aws-elastic-beanstalk-express-js-sample') {
+            withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
+                sh '''
+                    npm install -g snyk
+                    snyk auth $SNYK_TOKEN
+                    snyk test --file=package.json --package-manager=npm --severity-threshold=high
+                '''
             }
         }
+    }
+}
 
         stage('Build Docker Image') {
             steps {
