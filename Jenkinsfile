@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         REGISTRY = "docker.io/nikhilkhadka885"
-"   // 🔹 Replace with your DockerHub username
         IMAGE_NAME = "nodejs-sample-app"
     }
 
