@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "docker.io/<your-dockerhub-username>"   // 🔹 Replace with your DockerHub username
+        REGISTRY = "docker.io/nikhilkhadka885
+"   // 🔹 Replace with your DockerHub username
         IMAGE_NAME = "nodejs-sample-app"
     }
 
@@ -15,21 +16,23 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:16 npm install --save'
+             sh 'docker run --rm -v $WORKSPACE:/app -w /app node:16 npm install --save'
+
             }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'docker run --rm -v $PWD:/app -w /app node:16 npm test || echo "No tests available, skipping..."'
+          sh 'docker run --rm -v $WORKSPACE:/app -w /app node:16 npm install --save'
+
             }
         }
 
         stage('Security Scan') {
             steps {
                 withCredentials([string(credentialsId: 'snyk-token', variable: 'SNYK_TOKEN')]) {
-                    sh '''
-                    docker run --rm -v $PWD:/app -w /app node:16 bash -c "
+                     sh 'docker run --rm -v $WORKSPACE:/app -w /app node:16 npm install --save'
+
                       npm install -g snyk && snyk auth $SNYK_TOKEN && snyk test --severity-threshold=high
                     "
                     '''
