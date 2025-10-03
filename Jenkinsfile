@@ -60,7 +60,7 @@ stage('Push Docker Image') {
     }
   }
 }
-
+}
 
     post {
         always {
