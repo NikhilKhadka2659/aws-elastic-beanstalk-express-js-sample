@@ -13,11 +13,14 @@ pipeline {
             }
         }
 
-        stage('Install Dependencies') {
-            steps {
-                sh 'npm install --save'
-            }
-        }
+stage('Install Dependencies') {
+  steps {
+    dir('aws-elastic-beanstalk-express-js-sample') {
+      sh 'npm install --save'
+    }
+  }
+}
+
 
         stage('Run Tests') {
             steps {
