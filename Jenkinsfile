@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        REGISTRY = "docker.io/nikhilkhadka885
+        REGISTRY = "docker.io/nikhilkhadka885"
 "   // 🔹 Replace with your DockerHub username
         IMAGE_NAME = "nodejs-sample-app"
     }
